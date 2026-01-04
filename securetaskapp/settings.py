@@ -55,10 +55,11 @@ ROOT_URLCONF = 'securetaskapp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'securetaskapp' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -117,6 +118,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 # Additional Security Settings (for OWASP compliance)
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'task_list'
@@ -138,4 +142,3 @@ PASSWORD_HASHERS = [
 
 # X-Frame-Options
 X_FRAME_OPTIONS = 'DENY'
-

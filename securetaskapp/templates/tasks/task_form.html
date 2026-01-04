@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">{% if form.instance.pk %}Edit Task{% else %}Create New Task{% endif %}</h3>
+                </div>
+                <div class="card-body">
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Please correct the errors below:</strong>
+                            {{ form.errors }}
+                        </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="id_title" class="form-label fw-bold">Title *</label>
+                            <input type="text" name="title" class="form-control" id="id_title"
+                                   value="{{ form.title.value|default:'' }}" required
+                                   placeholder="Enter task title">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label fw-bold">Description</label>
+                            <textarea name="description" class="form-control" id="id_description"
+                                      rows="4" placeholder="Enter task description">{{ form.description.value|default:'' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_status" class="form-label fw-bold">Status *</label>
+                            <select name="status" class="form-select" id="id_status" required>
+                                <option value="TODO" {% if form.status.value == 'TODO' or not form.status.value %}selected{% endif %}>To Do</option>
+                                <option value="IN_PROGRESS" {% if form.status.value == 'IN_PROGRESS' %}selected{% endif %}>In Progress</option>
+                                <option value="DONE" {% if form.status.value == 'DONE' %}selected{% endif %}>Done</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="id_due_date" class="form-label fw-bold">Due Date</label>
+                            <input type="date" name="due_date" class="form-control" id="id_due_date"
+                                   value="{% if form.due_date.value %}{{ form.due_date.value|date:'Y-m-d' }}{% endif %}">
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success" type="submit">Save Task</button>
+                            <a class="btn btn-secondary" href="{% url 'task_list' %}">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
