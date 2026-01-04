@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tasks.apps.TasksConfig',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +55,7 @@ ROOT_URLCONF = 'securetaskapp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,3 +116,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Additional Security Settings (for OWASP compliance)
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'task_list'
+LOGOUT_REDIRECT_URL = 'login'
+
+# Secure cookies (set Secure=True in production with HTTPS)
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = False  # True in production
+CSRF_COOKIE_SECURE = False     # True in production
+CSRF_COOKIE_HTTPONLY = False
+
+# Password hashing - upgrade to Argon2 (bonus for sensitive data protection)
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
+
+# X-Frame-Options
+X_FRAME_OPTIONS = 'DENY'
+
