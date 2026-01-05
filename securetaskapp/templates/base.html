@@ -13,6 +13,9 @@
             <div class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
                     <span class="nav-item nav-link">Welcome, {{ user.username }} {% if user.is_staff %}(Admin){% endif %}</span>
+                    {% if user.is_staff %}
+                        <a class="nav-item nav-link" href="{% url 'audit_log' %}">Audit Log</a>
+                    {% endif %}
                     <form method="post" action="{% url 'logout' %}" class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="nav-link btn btn-link" style="cursor: pointer;">Logout</button>
