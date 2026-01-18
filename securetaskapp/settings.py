@@ -153,6 +153,18 @@ X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 
+# Content Security Policy (CSP) - OWASP ASVS V14
+# Note: Using django-csp middleware or custom middleware in production
+# For this project, CSP is implemented via meta tag in base.html
+# Production should use: django-csp package with these settings:
+# CSP_DEFAULT_SRC = ("'self'",)
+# CSP_STYLE_SRC = ("'self'", "cdn.jsdelivr.net")
+# CSP_SCRIPT_SRC = ("'self'", "cdn.jsdelivr.net")
+# CSP_IMG_SRC = ("'self'", "data:")
+
+# Referrer Policy - Prevents information leakage
+SECURE_REFERRER_POLICY = 'same-origin'
+
 # Django Axes - Login attempt limiting
 AUTHENTICATION_BACKENDS = [
     'axes.backends.AxesStandaloneBackend',

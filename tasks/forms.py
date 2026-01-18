@@ -11,6 +11,7 @@ OWASP Security Controls:
 """
 
 from django import forms
+from django.utils import timezone
 from .models import Task
 
 
@@ -68,3 +69,16 @@ class TaskForm(forms.ModelForm):
         if len(title) < 1:
             raise forms.ValidationError("Title cannot be empty.")
         return title
+
+    def clean_due_date(self):
+        """
+        Validate the due date field.
+        
+        Validation:
+        - Due date cannot be in the past
+        - Allows empty/null due dates (optional field)
+        """
+        due_date = self.cleaned_data.get('due_date')
+        if due_date and due_date < timezone.now().date():
+            raise forms.ValidationError("Date already passed. Please select today or a future date.")
+        return due_date

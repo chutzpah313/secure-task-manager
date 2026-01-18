@@ -22,6 +22,7 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 
 from .models import Task
+from .forms import TaskForm
 from auditlog.models import AuditLog
 
 
@@ -59,7 +60,8 @@ class RegisterView(CreateView):
         """Save user and auto-login after successful registration."""
         response = super().form_valid(form)
         # Auto-login the newly registered user
-        login(self.request, self.object)
+        # Specify backend to avoid issues with multiple authentication backends
+        login(self.request, self.object, backend='django.contrib.auth.backends.ModelBackend')
         return response
 
 
@@ -103,9 +105,10 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     - Auto-assigns owner: Prevents task creation for other users
     - Audit logging: Records task creation
     - CSRF: Protected by Django form
+    - Input validation: Due date cannot be in the past
     """
     model = Task
-    fields = ['title', 'description', 'status', 'due_date']
+    form_class = TaskForm
     template_name = 'tasks/task_form.html'
     success_url = reverse_lazy('task_list')
 
@@ -137,9 +140,10 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     - UserPassesTestMixin: Verifies ownership or admin role (RBAC)
     - Prevents IDOR: Cannot edit other users' tasks
     - Audit logging: Records task updates
+    - Input validation: Due date cannot be in the past
     """
     model = Task
-    fields = ['title', 'description', 'status', 'due_date']
+    form_class = TaskForm
     template_name = 'tasks/task_form.html'
     success_url = reverse_lazy('task_list')
 
