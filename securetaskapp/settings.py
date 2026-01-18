@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-only-not-for-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if os.environ.get('DJANGO_ALLOWED_HOSTS') else []
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'axes',
     'tasks.apps.TasksConfig',
     'auditlog.apps.AuditlogConfig',
 ]
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'securetaskapp.urls'
@@ -131,6 +133,8 @@ LOGOUT_REDIRECT_URL = 'login'
 # Secure cookies (set Secure=True in production with HTTPS)
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = False  # True in production
+SESSION_COOKIE_AGE = 1800  # 30 minutes session timeout
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 CSRF_COOKIE_SECURE = False     # True in production
 CSRF_COOKIE_HTTPONLY = False
 
@@ -143,4 +147,21 @@ PASSWORD_HASHERS = [
 ]
 
 # X-Frame-Options
+X_FRAME_OPTIONS = 'DENY'
+
+# Additional Security Headers
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+
+# Django Axes - Login attempt limiting
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+AXES_FAILURE_LIMIT = 5  # Lock after 5 failed attempts
+AXES_COOLOFF_TIME = 2 / 60  # Lock for 2 minutes (2/60 hours)
+AXES_LOCKOUT_PARAMETERS = ['username', 'ip_address']  # Lock by username + IP
+AXES_RESET_ON_SUCCESS = True  # Reset failed attempts on successful login
+AXES_LOCKOUT_TEMPLATE = 'registration/lockout.html'  # Custom lockout page
 X_FRAME_OPTIONS = 'DENY'

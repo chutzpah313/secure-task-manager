@@ -12,7 +12,7 @@
             <a class="navbar-brand" href="{% url 'task_list' %}">Secure Tasks</a>
             <div class="navbar-nav ms-auto">
                 {% if user.is_authenticated %}
-                    <span class="nav-item nav-link">Welcome, {{ user.username }} {% if user.is_staff %}(Admin){% endif %}</span>
+                    <a class="nav-item nav-link" href="{% url 'profile' %}">{{ user.username }} {% if user.is_staff %}(Admin){% endif %}</a>
                     {% if user.is_staff %}
                         <a class="nav-item nav-link" href="{% url 'audit_log' %}">Audit Log</a>
                     {% endif %}
